@@ -29,3 +29,24 @@ EDITOR_VOLUME=your_volume_name
 ved /path/to/volume_file
 ```
 
+## php editor
+
+```sh
+phpdev () {
+    tty=
+    tty -s && tty=--tty
+    docker run \
+        $tty \
+        --interactive \
+        --rm \
+        --network host \
+        --volume $PWD:/src \
+        --volume $HOME/dotfiles:/root/dotfiles \
+        --volume $HOME/.vim:/root/.vim \
+        --volume $HOME/.oh-my-zsh:/root/.oh-my-zsh \
+        --volume $HOME/.ssh:/root/.ssh \
+        --volume $HOME/.gitconfig:/root/.gitconfig \
+        php:editor "$@"
+}
+```
+

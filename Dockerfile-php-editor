@@ -1,0 +1,25 @@
+FROM php:alpine
+
+RUN sed -i -e "s/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g" /etc/apk/repositories \
+  && apk add --no-cache \
+    openssh \
+    git \
+    zsh \
+    vim
+
+RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
+    && apk add --no-cache libxml2-dev \
+    && docker-php-source extract \
+    && docker-php-ext-install -j$(nproc) \
+      pdo_mysql \
+      soap \
+    && docker-php-source delete \
+    && echo done!
+
+RUN curl -s https://raw.githubusercontent.com/composer/getcomposer.org/877cb10b101957ef8bbb9d196f711dbb8a011bb4/web/installer | php -- --install-dir=/bin --filename=composer --quiet
+
+WORKDIR /src
+
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+ENTRYPOINT ["/bin/zsh", "/docker-entrypoint.sh"]
+
